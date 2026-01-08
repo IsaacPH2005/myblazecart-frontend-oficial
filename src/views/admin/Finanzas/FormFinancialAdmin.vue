@@ -179,7 +179,7 @@
                                 <div class="space-y-2">
                                     <label
                                         for="numero_transaccion"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        class="block text-sm font-medium text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*'] dark:text-gray-300"
                                     >
                                         Número de Transacción
                                     </label>
@@ -187,7 +187,7 @@
                                         v-model="form.numero_transaccion"
                                         type="text"
                                         id="numero_transaccion"
-                                        placeholder="Opcional: se generará automáticamente"
+                                        placeholder="Ingresa el número de transacción"
                                         class="block w-full rounded-xl border px-4 py-3 text-base shadow-sm transition-all duration-200 focus:ring-4 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500 sm:py-2.5"
                                         :class="{
                                             'border-red-500 focus:ring-red-500/20':
@@ -233,7 +233,6 @@
                                                 'border-gray-300 focus:border-emerald-500':
                                                     !errors.tipo_de_transaccion,
                                             }"
-                                            @change="handleTipoTransaccionChange"
                                         >
                                             <option value="">Seleccionar tipo</option>
                                             <option value="Ingreso">Ingreso</option>
@@ -508,7 +507,15 @@
                                                             ></path>
                                                         </svg>
                                                     </div>
-                                                    <span>{{ category.nombre }}</span>
+                                                    <div>
+                                                        <span>{{ category.nombre }}</span>
+                                                        <span
+                                                            v-if="category.subcategoria"
+                                                            class="ml-2 text-xs text-gray-500 dark:text-gray-400"
+                                                        >
+                                                            ({{ category.subcategoria }})
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div
@@ -994,8 +1001,8 @@
                                     ></span>
                                     <span
                                         ><span class="font-semibold">Instrucciones:</span> Ingresa
-                                        el nombre del cliente o proveedor, marca si es un egreso
-                                        directo y añade observaciones.</span
+                                        el nombre del cliente o proveedor y añade
+                                        observaciones.</span
                                     >
                                 </p>
                             </div>
@@ -1016,122 +1023,6 @@
                                             placeholder="Nombre del cliente o proveedor"
                                             class="block w-full rounded-xl border px-4 py-3 text-base shadow-sm transition-all duration-200 focus:ring-4 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500 sm:py-2.5"
                                         />
-                                    </div>
-                                    <!-- Egreso Directo - Solo visible para egresos -->
-                                    <div
-                                        v-if="form.tipo_de_transaccion === 'Egreso'"
-                                        class="space-y-2"
-                                    >
-                                        <label
-                                            class="block text-sm font-medium text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*'] dark:text-gray-300"
-                                        >
-                                            Tipo de Egreso
-                                        </label>
-                                        <div class="flex flex-col gap-2 sm:flex-row">
-                                            <label
-                                                class="flex items-center gap-3 p-4 transition-all duration-200 border cursor-pointer rounded-xl hover:border-emerald-300 hover:bg-emerald-50 dark:border-gray-600 dark:hover:border-emerald-500 dark:hover:bg-emerald-900/20"
-                                                :class="{
-                                                    'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 dark:border-emerald-400':
-                                                        form.egreso_directo === true,
-                                                }"
-                                            >
-                                                <div class="relative">
-                                                    <input
-                                                        v-model="form.egreso_directo"
-                                                        type="radio"
-                                                        class="sr-only"
-                                                        :value="true"
-                                                        name="egreso_directo"
-                                                    />
-                                                    <div
-                                                        class="flex items-center justify-center w-6 h-6 transition-colors duration-200 border rounded-md"
-                                                        :class="
-                                                            form.egreso_directo === true
-                                                                ? 'border-emerald-500 bg-emerald-500'
-                                                                : 'border-gray-300 dark:border-gray-500'
-                                                        "
-                                                    >
-                                                        <svg
-                                                            v-if="form.egreso_directo === true"
-                                                            class="w-4 h-4 text-white"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                fill-rule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clip-rule="evenodd"
-                                                            ></path>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                                <span
-                                                    class="text-base text-gray-700 dark:text-gray-300"
-                                                >
-                                                    Directo
-                                                </span>
-                                            </label>
-                                            <label
-                                                class="flex items-center gap-3 p-4 transition-all duration-200 border cursor-pointer rounded-xl hover:border-emerald-300 hover:bg-emerald-50 dark:border-gray-600 dark:hover:border-emerald-500 dark:hover:bg-emerald-900/20"
-                                                :class="{
-                                                    'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 dark:border-emerald-400':
-                                                        form.egreso_directo === false,
-                                                }"
-                                            >
-                                                <div class="relative">
-                                                    <input
-                                                        v-model="form.egreso_directo"
-                                                        type="radio"
-                                                        class="sr-only"
-                                                        :value="false"
-                                                        name="egreso_directo"
-                                                    />
-                                                    <div
-                                                        class="flex items-center justify-center w-6 h-6 transition-colors duration-200 border rounded-md"
-                                                        :class="
-                                                            form.egreso_directo === false
-                                                                ? 'border-emerald-500 bg-emerald-500'
-                                                                : 'border-gray-300 dark:border-gray-500'
-                                                        "
-                                                    >
-                                                        <svg
-                                                            v-if="form.egreso_directo === false"
-                                                            class="w-4 h-4 text-white"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                        >
-                                                            <path
-                                                                fill-rule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clip-rule="evenodd"
-                                                            ></path>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                                <span
-                                                    class="text-base text-gray-700 dark:text-gray-300"
-                                                >
-                                                    Indirecto
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <p
-                                            v-if="errors.egreso_directo"
-                                            class="flex items-center gap-1 mt-1 text-xs text-red-500"
-                                        >
-                                            <svg
-                                                class="w-4 h-4"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path
-                                                    fill-rule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                    clip-rule="evenodd"
-                                                ></path>
-                                            </svg>
-                                            {{ errors.egreso_directo }}
-                                        </p>
                                     </div>
                                 </div>
                                 <!-- Observaciones -->
@@ -1477,7 +1368,6 @@ const form = ref({
     cantidad: null,
     importe_total: null,
     cliente_proveedor: '',
-    egreso_directo: null, // Inicialmente null
     observaciones: '',
     archivos: [], // Array para múltiples archivos
     numero_transaccion: '', // Nuevo campo
@@ -1695,17 +1585,6 @@ const formatFileSize = bytes => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// --- MANEJO DE TIPO DE TRANSACCIÓN ---
-const handleTipoTransaccionChange = () => {
-    // Si el tipo de transacción es "Ingreso", establecer egreso_directo en null
-    if (form.value.tipo_de_transaccion === 'Ingreso') {
-        form.value.egreso_directo = null;
-    } else if (form.value.tipo_de_transaccion === 'Egreso') {
-        // Si cambia a egreso, establecer un valor por defecto (false)
-        form.value.egreso_directo = false;
-    }
-};
-
 // --- FUNCIÓN PARA DESPLAZAR HACIA ARRIBA ---
 const scrollToTop = () => {
     // Intentar encontrar el contenedor principal (main)
@@ -1758,12 +1637,7 @@ const submitForm = async () => {
 
     // Corrección: Manejar correctamente todos los campos del formulario
     for (const key in form.value) {
-        if (key === 'egreso_directo') {
-            // Solo enviar egreso_directo si no es null y es un egreso
-            if (form.value.tipo_de_transaccion === 'Egreso' && form.value[key] !== null) {
-                formData.append(key, form.value[key] ? '1' : '0');
-            }
-        } else if (key === 'archivos') {
+        if (key === 'archivos') {
             // Manejo especial para archivos múltiples
             if (form.value[key] && form.value[key].length > 0) {
                 form.value[key].forEach(archivo => {
@@ -1798,7 +1672,6 @@ const submitForm = async () => {
             cantidad: null,
             importe_total: null,
             cliente_proveedor: '',
-            egreso_directo: null,
             observaciones: '',
             archivos: [], // Limpiar archivos
             numero_transaccion: '',

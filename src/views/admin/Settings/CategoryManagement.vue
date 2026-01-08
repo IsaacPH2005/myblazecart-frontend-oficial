@@ -7,7 +7,7 @@
                 : 'bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50'
         "
     >
-        <!-- Header: Encabezado principal con título y botón de nueva categoría -->
+        <!-- Header: Encabezado principal con título y botones -->
         <div
             class="p-3 mb-3 transition-colors duration-200 shadow-lg rounded-xl sm:p-4 lg:p-6 sm:mb-4 lg:mb-6"
             :class="
@@ -40,13 +40,29 @@
                         </p>
                     </div>
                 </div>
-                <button
-                    @click="openCreateModal"
-                    class="flex items-center justify-center px-4 py-2.5 font-medium text-white transition-all duration-200 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg hover:from-yellow-500 hover:to-orange-600 shadow-md hover:shadow-lg touch-manipulation transform hover:scale-105"
-                >
-                    <PlusIcon class="w-4 h-4 mr-2" />
-                    Nueva Categoría
-                </button>
+                <div class="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3">
+                    <button
+                        @click="downloadTemplate"
+                        class="flex items-center justify-center px-4 py-2.5 font-medium text-white transition-all duration-200 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg hover:from-green-600 hover:to-emerald-700 shadow-md hover:shadow-lg touch-manipulation transform hover:scale-105"
+                    >
+                        <DownloadIcon class="w-4 h-4 mr-2" />
+                        Descargar Plantilla
+                    </button>
+                    <button
+                        @click="triggerFileInput"
+                        class="flex items-center justify-center px-4 py-2.5 font-medium text-white transition-all duration-200 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg hover:from-blue-600 hover:to-indigo-700 shadow-md hover:shadow-lg touch-manipulation transform hover:scale-105"
+                    >
+                        <UploadIcon class="w-4 h-4 mr-2" />
+                        Importar Categorías
+                    </button>
+                    <button
+                        @click="openCreateModal"
+                        class="flex items-center justify-center px-4 py-2.5 font-medium text-white transition-all duration-200 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg hover:from-yellow-500 hover:to-orange-600 shadow-md hover:shadow-lg touch-manipulation transform hover:scale-105"
+                    >
+                        <PlusIcon class="w-4 h-4 mr-2" />
+                        Nueva Categoría
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -93,7 +109,7 @@
         </div>
 
         <!-- Stats Cards: Tarjetas de estadísticas -->
-        <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
             <div
                 class="p-4 transition-colors duration-200 shadow-lg rounded-xl"
                 :class="
@@ -133,6 +149,42 @@
                     {{ filteredCategories.filter(c => c.estado).length }}
                 </p>
             </div>
+            <div
+                class="p-4 transition-colors duration-200 shadow-lg rounded-xl"
+                :class="
+                    isDarkMode
+                        ? 'bg-gray-800 border border-gray-700'
+                        : 'bg-white border border-gray-200'
+                "
+            >
+                <h3
+                    class="mb-2 text-sm font-medium transition-colors duration-200"
+                    :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                >
+                    Clasificaciones
+                </h3>
+                <p class="text-xl font-bold" :class="isDarkMode ? 'text-white' : 'text-gray-900'">
+                    {{ uniqueClassifications.length }}
+                </p>
+            </div>
+            <div
+                class="p-4 transition-colors duration-200 shadow-lg rounded-xl"
+                :class="
+                    isDarkMode
+                        ? 'bg-gray-800 border border-gray-700'
+                        : 'bg-white border border-gray-200'
+                "
+            >
+                <h3
+                    class="mb-2 text-sm font-medium transition-colors duration-200"
+                    :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                >
+                    Agrupaciones
+                </h3>
+                <p class="text-xl font-bold" :class="isDarkMode ? 'text-white' : 'text-gray-900'">
+                    {{ uniqueGroupings.length }}
+                </p>
+            </div>
         </div>
 
         <!-- Desktop Table: Tabla para vista de escritorio -->
@@ -154,12 +206,32 @@
                             <th
                                 class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
                             >
+                                ID
+                            </th>
+                            <th
+                                class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
+                            >
                                 Nombre
                             </th>
                             <th
                                 class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
                             >
-                                Descripción
+                                Código
+                            </th>
+                            <th
+                                class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
+                            >
+                                Clasificación
+                            </th>
+                            <th
+                                class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
+                            >
+                                Subcategoría
+                            </th>
+                            <th
+                                class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
+                            >
+                                Agrupación
                             </th>
                             <th
                                 class="px-6 py-4 text-xs font-medium tracking-wider text-left text-white uppercase"
@@ -189,6 +261,14 @@
                                     class="text-sm font-medium"
                                     :class="isDarkMode ? 'text-white' : 'text-gray-900'"
                                 >
+                                    {{ cat.id }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div
+                                    class="text-sm font-medium"
+                                    :class="isDarkMode ? 'text-white' : 'text-gray-900'"
+                                >
                                     {{ cat.nombre }}
                                 </div>
                             </td>
@@ -197,7 +277,31 @@
                                     class="text-sm"
                                     :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
                                 >
-                                    {{ cat.descripcion || 'Sin descripción' }}
+                                    {{ cat.codigo || '-' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div
+                                    class="text-sm"
+                                    :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                                >
+                                    {{ cat.clasificacion || '-' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div
+                                    class="text-sm"
+                                    :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                                >
+                                    {{ cat.subcategoria || '-' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div
+                                    class="text-sm"
+                                    :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                                >
+                                    {{ cat.agrupacion || '-' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -280,6 +384,12 @@
                             >
                                 {{ cat.nombre }}
                             </h3>
+                            <p
+                                class="text-xs truncate transition-colors duration-200 sm:text-sm"
+                                :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'"
+                            >
+                                {{ cat.codigo || 'Sin código' }}
+                            </p>
                         </div>
                     </div>
                     <span
@@ -298,7 +408,34 @@
                         class="flex items-center text-xs transition-colors duration-200 sm:text-sm"
                         :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
                     >
-                        <FileTextIcon class="flex-shrink-0 w-4 h-4 mr-3 text-gray-400" />
+                        <FolderIcon class="flex-shrink-0 w-4 h-4 mr-3 text-gray-400" />
+                        <span class="truncate"
+                            >Clasificación: {{ cat.clasificacion || 'No especificada' }}</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center text-xs transition-colors duration-200 sm:text-sm"
+                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                    >
+                        <FolderOpenIcon class="flex-shrink-0 w-4 h-4 mr-3 text-gray-400" />
+                        <span class="truncate"
+                            >Subcategoría: {{ cat.subcategoria || 'No especificada' }}</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-center text-xs transition-colors duration-200 sm:text-sm"
+                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                    >
+                        <LayersIcon class="flex-shrink-0 w-4 h-4 mr-3 text-gray-400" />
+                        <span class="truncate"
+                            >Agrupación: {{ cat.agrupacion || 'No especificada' }}</span
+                        >
+                    </div>
+                    <div
+                        class="flex items-start text-xs transition-colors duration-200 sm:text-sm"
+                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
+                    >
+                        <FileTextIcon class="flex-shrink-0 w-4 h-4 mr-3 mt-0.5 text-gray-400" />
                         <span class="truncate">{{ cat.descripcion || 'Sin descripción' }}</span>
                     </div>
                 </div>
@@ -449,6 +586,103 @@
                                         class="block mb-2 text-sm font-medium transition-colors duration-200"
                                         :class="isDarkMode ? 'text-gray-300' : 'text-gray-700'"
                                     >
+                                        Código
+                                    </label>
+                                    <input
+                                        v-model="form.codigo"
+                                        type="text"
+                                        class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base transition-colors duration-200"
+                                        :class="
+                                            isDarkMode
+                                                ? 'bg-gray-800 border-gray-600 text-white'
+                                                : 'bg-white border-gray-300 text-gray-900'
+                                        "
+                                        placeholder="Código de la categoría"
+                                    />
+                                    <p v-if="formErrors.codigo" class="mt-1 text-xs text-red-500">
+                                        {{ formErrors.codigo }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-2 text-sm font-medium transition-colors duration-200"
+                                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-700'"
+                                    >
+                                        Clasificación
+                                    </label>
+                                    <input
+                                        v-model="form.clasificacion"
+                                        type="text"
+                                        class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base transition-colors duration-200"
+                                        :class="
+                                            isDarkMode
+                                                ? 'bg-gray-800 border-gray-600 text-white'
+                                                : 'bg-white border-gray-300 text-gray-900'
+                                        "
+                                        placeholder="Clasificación de la categoría"
+                                    />
+                                    <p
+                                        v-if="formErrors.clasificacion"
+                                        class="mt-1 text-xs text-red-500"
+                                    >
+                                        {{ formErrors.clasificacion }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-2 text-sm font-medium transition-colors duration-200"
+                                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-700'"
+                                    >
+                                        Subcategoría
+                                    </label>
+                                    <input
+                                        v-model="form.subcategoria"
+                                        type="text"
+                                        class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base transition-colors duration-200"
+                                        :class="
+                                            isDarkMode
+                                                ? 'bg-gray-800 border-gray-600 text-white'
+                                                : 'bg-white border-gray-300 text-gray-900'
+                                        "
+                                        placeholder="Subcategoría"
+                                    />
+                                    <p
+                                        v-if="formErrors.subcategoria"
+                                        class="mt-1 text-xs text-red-500"
+                                    >
+                                        {{ formErrors.subcategoria }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-2 text-sm font-medium transition-colors duration-200"
+                                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-700'"
+                                    >
+                                        Agrupación
+                                    </label>
+                                    <input
+                                        v-model="form.agrupacion"
+                                        type="text"
+                                        class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm sm:text-base transition-colors duration-200"
+                                        :class="
+                                            isDarkMode
+                                                ? 'bg-gray-800 border-gray-600 text-white'
+                                                : 'bg-white border-gray-300 text-gray-900'
+                                        "
+                                        placeholder="Agrupación"
+                                    />
+                                    <p
+                                        v-if="formErrors.agrupacion"
+                                        class="mt-1 text-xs text-red-500"
+                                    >
+                                        {{ formErrors.agrupacion }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block mb-2 text-sm font-medium transition-colors duration-200"
+                                        :class="isDarkMode ? 'text-gray-300' : 'text-gray-700'"
+                                    >
                                         Descripción
                                     </label>
                                     <textarea
@@ -510,6 +744,15 @@
                 </div>
             </div>
         </div>
+
+        <!-- Input de archivo oculto para importación -->
+        <input
+            ref="fileInput"
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            class="hidden"
+            @change="handleFileImport"
+        />
     </div>
 </template>
 
@@ -520,19 +763,26 @@ import { isDarkMode } from '@/composables/useDarkMode';
 import {
     activateCategory,
     deactivateCategory,
+    downloadCategoriesTemplate,
+    importCategories,
     indexCategories,
     showCategory,
     storeCategory,
     updateCategory,
 } from '@/services/CategoryService';
 import {
+    DownloadIcon,
     EditIcon,
     FileTextIcon,
+    FolderIcon,
+    FolderOpenIcon,
+    LayersIcon,
     PlusIcon,
     RefreshCwIcon,
     SearchIcon,
     TagIcon,
     TrashIcon,
+    UploadIcon,
     XIcon,
 } from 'lucide-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -553,9 +803,14 @@ const form = ref({
     // Datos del formulario
     id: null,
     nombre: '',
+    codigo: '',
+    clasificacion: '',
+    subcategoria: '',
+    agrupacion: '',
     descripcion: '',
 });
 const formErrors = ref({}); // Errores de validación del formulario
+const fileInput = ref(null); // Referencia al input de archivo
 
 // Propiedades computadas
 const filteredCategories = computed(() => {
@@ -580,6 +835,18 @@ const totalPages = computed(() => {
     return Math.ceil(filteredCategories.value.length / perPage.value);
 });
 
+const uniqueClassifications = computed(() => {
+    // Obtiene clasificaciones únicas
+    const classifications = categories.value.map(cat => cat.clasificacion).filter(Boolean);
+    return [...new Set(classifications)];
+});
+
+const uniqueGroupings = computed(() => {
+    // Obtiene agrupaciones únicas
+    const groupings = categories.value.map(cat => cat.agrupacion).filter(Boolean);
+    return [...new Set(groupings)];
+});
+
 // Métodos del componente
 const listCategories = async () => {
     // Obtiene la lista de categorías desde la API
@@ -587,6 +854,7 @@ const listCategories = async () => {
         showLoading();
         const { data } = await indexCategories();
         categories.value = data.data || [];
+        console.log(categories.value);
     } catch (error) {
         console.error('Error loading categories:', error);
         showError('Error', 'No se pudieron cargar las categorías.');
@@ -597,7 +865,15 @@ const listCategories = async () => {
 
 const resetForm = () => {
     // Reinicia el formulario a su estado inicial
-    form.value = { id: null, nombre: '', descripcion: '' };
+    form.value = {
+        id: null,
+        nombre: '',
+        codigo: '',
+        clasificacion: '',
+        subcategoria: '',
+        agrupacion: '',
+        descripcion: '',
+    };
     formErrors.value = {};
     posicion.value = null;
 };
@@ -708,6 +984,66 @@ const prevPage = () => {
 const nextPage = () => {
     // Navega a la página siguiente
     if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+// Métodos para importación/exportación
+const downloadTemplate = async () => {
+    // Descarga la plantilla para importar categorías
+    try {
+        showLoading();
+        const response = await downloadCategoriesTemplate();
+
+        // Crear un blob a partir de la respuesta
+        const blob = new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+
+        // Crear una URL para el blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Crear un enlace temporal para descargar el archivo
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'plantilla_categorias.xlsx');
+        document.body.appendChild(link);
+        link.click();
+
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        showSuccess('Éxito', 'Plantilla descargada correctamente.');
+    } catch (error) {
+        console.error('Error downloading template:', error);
+        showError('Error', 'No se pudo descargar la plantilla.');
+    } finally {
+        closeLoading();
+    }
+};
+
+const triggerFileInput = () => {
+    // Activa el input de archivo oculto
+    fileInput.value.click();
+};
+
+const handleFileImport = async event => {
+    // Maneja la importación de categorías desde un archivo
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        showLoading();
+        await importCategories(file);
+        showSuccess('Éxito', 'Categorías importadas correctamente.');
+        await listCategories(); // Refresca la lista
+    } catch (error) {
+        console.error('Error importing categories:', error);
+        showError('Error', 'No se pudieron importar las categorías.');
+    } finally {
+        // Limpiar el input de archivo
+        event.target.value = '';
+        closeLoading();
+    }
 };
 
 // Observadores

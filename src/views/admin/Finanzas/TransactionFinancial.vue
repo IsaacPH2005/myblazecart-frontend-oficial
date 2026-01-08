@@ -399,6 +399,21 @@
                         <BarChart3Icon class="w-4 h-4 mr-2" />
                         <span class="hidden sm:inline">Totales Caja</span>
                     </button>
+
+                    <!-- Nuevo botón para exportar reporte fiscal -->
+                    <button
+                        @click="exportFiscalReport"
+                        class="flex items-center justify-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
+                        :class="
+                            isDarkMode
+                                ? 'bg-amber-700 text-white hover:bg-amber-600'
+                                : 'bg-amber-500 text-white hover:bg-amber-600'
+                        "
+                        title="Exportar reporte fiscal a Excel"
+                    >
+                        <FileTextIcon class="w-4 h-4 mr-2" />
+                        <span class="hidden sm:inline">Reporte Fiscal</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -743,15 +758,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
-                                    v-if="transaction.tipo_de_transaccion === 'Egreso'"
+                                    v-if="transaction.subcategoria"
                                     :class="
-                                        transaction.egreso_directo
+                                        transaction.subcategoria
                                             ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100'
                                             : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                     "
                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                                 >
-                                    {{ transaction.egreso_directo ? 'Directo' : 'Indirecto' }}
+                                    {{ transaction.subcategoria }}
                                 </span>
                                 <span v-else class="text-gray-500">-</span>
                             </td>
@@ -883,14 +898,12 @@
                         }}</span>
                     </div>
                     <div
-                        v-if="transaction.tipo_de_transaccion === 'Egreso'"
+                        v-if="transaction.subcategoria"
                         class="flex items-center text-xs transition-colors duration-200 sm:text-sm"
                         :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
                     >
                         <RefreshCwIcon class="flex-shrink-0 w-4 h-4 mr-3 text-gray-400" />
-                        <span class="truncate">{{
-                            transaction.egreso_directo ? 'Egreso Directo' : 'Egreso Indirecto'
-                        }}</span>
+                        <span class="truncate">{{ transaction.subcategoria }}</span>
                     </div>
                     <div
                         class="flex items-center text-xs transition-colors duration-200 sm:text-sm"
@@ -2583,6 +2596,7 @@ import {
     changeStateFinancialTransaction,
     deleteFinancialTransaction,
     downloadTransactionFinancialTemplate,
+    exportFiscalReportToExcel,
     exportTransactionFinancialExcel,
     importTransactionFinancial,
     indexTransactionFinancialAll,
@@ -2603,6 +2617,7 @@ import {
     EditIcon,
     EyeIcon,
     FileIcon,
+    FileTextIcon,
     PlusIcon,
     RefreshCwIcon,
     SearchIcon,
@@ -3368,6 +3383,60 @@ const exportToExcel = async () => {
     } catch (error) {
         console.error('Error exporting to Excel:', error);
         showError('Error', 'No se pudo exportar los datos a Excel. Inténtelo de nuevo.');
+    } finally {
+        closeLoading();
+    }
+};
+
+// Nueva función para exportar reporte fiscal a Excel
+const exportFiscalReport = async () => {
+    try {
+        showLoading();
+        // Construir parámetros de filtro (iguales a los de listTransactions)
+        const params = {};
+        if (searchQuery.value) params.search = searchQuery.value;
+        if (selectedType.value) params.tipo = selectedType.value;
+        if (selectedStatus.value) params.estado = selectedStatus.value;
+        if (selectedCategory.value) params.categoria = selectedCategory.value;
+        if (selectedType.value === 'Egreso' && selectedEgresoDirecto.value !== '') {
+            params.egreso_directo = selectedEgresoDirecto.value === 'true' ? true : false;
+        }
+        if (filterDateFrom.value) params.fecha_desde = filterDateFrom.value;
+        if (filterDateTo.value) params.fecha_hasta = filterDateTo.value;
+
+        // Filtros de caja operativa
+        if (selectedOperatingBoxId.value) {
+            params.caja_operativa_id = selectedOperatingBoxId.value;
+            if (selectedOperatingBoxMovementType.value) {
+                params.tipo_movimiento_caja = selectedOperatingBoxMovementType.value;
+            }
+        }
+
+        // Llamar al servicio de exportación fiscal
+        const response = await exportFiscalReportToExcel(params);
+        // Crear un blob con los datos recibidos
+        const blob = new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        // Crear una URL para el blob
+        const url = window.URL.createObjectURL(blob);
+        // Crear un enlace temporal para descargar el archivo
+        const link = document.createElement('a');
+        link.href = url;
+        // Generar nombre de archivo con fecha actual
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        link.setAttribute('download', `reporte_fiscal_${dateStr}.xlsx`);
+        // Simular clic en el enlace para iniciar la descarga
+        document.body.appendChild(link);
+        link.click();
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        showSuccess('Éxito', 'El reporte fiscal se ha exportado correctamente a Excel.');
+    } catch (error) {
+        console.error('Error exporting fiscal report:', error);
+        showError('Error', 'No se pudo exportar el reporte fiscal a Excel. Inténtelo de nuevo.');
     } finally {
         closeLoading();
     }

@@ -26,7 +26,10 @@ export const exportTransactionFinancialExcel = filtros => {
         params: filtros,
     });
 };
-
+// Agregar esta nueva función para exportar reporte fiscal a Excel
+export const exportFiscalReportToExcel = filtros => {
+    return httpDownload().post(`${urlBase}/financial-report/export-excel-fiscal`, filtros);
+};
 export const importTransactionFinancial = formData => {
     return httpAsset().post(`${urlBase}/transactions/import`, formData);
 };
